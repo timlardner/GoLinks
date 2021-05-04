@@ -16,7 +16,6 @@ resource "aws_apigatewayv2_domain_name" "tftest-domain" {
 resource "aws_apigatewayv2_deployment" "deployment" {
   api_id      = aws_apigatewayv2_api.tftest.id
   description = "Deployment"
-
   lifecycle {
     create_before_destroy = true
   }
@@ -33,6 +32,7 @@ resource "aws_apigatewayv2_stage" "default" {
   api_id = aws_apigatewayv2_api.tftest.id
   name   = "$default"
   deployment_id = aws_apigatewayv2_deployment.deployment.id
+
 }
 
 resource "aws_apigatewayv2_api_mapping" "mapping" {
@@ -40,7 +40,6 @@ resource "aws_apigatewayv2_api_mapping" "mapping" {
   domain_name = aws_apigatewayv2_domain_name.tftest-domain.id
   stage       = aws_apigatewayv2_stage.default.id
 }
-
 
 resource "aws_apigatewayv2_integration" "tftest-read" {
   api_id           = aws_apigatewayv2_api.tftest.id
@@ -83,7 +82,7 @@ resource "aws_apigatewayv2_integration" "tftest-write" {
 
 resource "aws_apigatewayv2_route" "read" {
   api_id    = aws_apigatewayv2_api.tftest.id
-  route_key = "GET $default"
+  route_key = "$default"
   target = "integrations/${aws_apigatewayv2_integration.tftest-read.id}"
 }
 

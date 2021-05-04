@@ -5,7 +5,7 @@ resource "aws_lambda_permission" "apigw_lambda_read" {
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.tftest-read.function_name
   principal     = "apigateway.amazonaws.com"
-  source_arn = "${aws_apigatewayv2_api.tftest.execution_arn}/*/*/*"
+  source_arn = "${aws_apigatewayv2_api.tftest.execution_arn}/*/*"
 }
 
 resource "aws_lambda_permission" "apigw_lambda_write" {

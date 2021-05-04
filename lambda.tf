@@ -1,3 +1,4 @@
+# Package code for deploy
 data "archive_file" "zipread" {
   type        = "zip"
   source_file = "pylib/read.py"
@@ -30,6 +31,8 @@ resource "aws_lambda_function" "tftest-read" {
   runtime = "python3.8"
 }
 
+# Define actual functions
+
 resource "aws_lambda_function" "tftest-list" {
   filename      = "payload-lambda-list.zip"
   function_name = "tftest-list"
@@ -41,7 +44,7 @@ resource "aws_lambda_function" "tftest-list" {
 resource "aws_lambda_function" "tftest-write" {
   filename      = "payload-lambda-write.zip"
   function_name = "tftest-write"
-  role          = aws_iam_role.iam_for_read.arn
+  role          = aws_iam_role.iam_for_write.arn
   handler       = "write.lambda_handler"
   runtime = "python3.8"
 }
