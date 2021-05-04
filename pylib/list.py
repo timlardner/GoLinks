@@ -4,7 +4,7 @@ import json
 
 def lambda_handler(event, context):
     dynamodb = boto3.resource('dynamodb')
-    table = dynamodb.Table('golinks')
+    table = dynamodb.Table('tftest')
     
     x = sorted(table.scan()['Items'], key=lambda x: x['shortcode'])
     body = """

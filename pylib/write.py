@@ -1,6 +1,5 @@
 import boto3
 import botocore
-import json
 from urllib import parse
 
 
@@ -18,7 +17,7 @@ def lambda_handler(event, context):
         }
         
     dynamodb = boto3.resource('dynamodb')
-    table = dynamodb.Table('golinks')
+    table = dynamodb.Table('tftest')
     try:
         table.put_item(
             Item={
