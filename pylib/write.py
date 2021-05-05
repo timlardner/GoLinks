@@ -1,10 +1,12 @@
 import boto3
 import botocore
 from urllib import parse
+import json
 
 
 def lambda_handler(event, context):
-    # TODO implement
+    with open('config.json', 'r') as f:
+        config = json.load(f)
     
     qs = parse.parse_qs(event['queryStringParameters']['body'])
     shortlink = qs['shortlink'][0]
@@ -17,7 +19,7 @@ def lambda_handler(event, context):
         }
         
     dynamodb = boto3.resource('dynamodb')
-    table = dynamodb.Table('tftest')
+    table = dynamodb.Table(config['TABLE'])
     try:
         table.put_item(
             Item={

@@ -13,3 +13,7 @@ provider "aws" {
   profile = "default"
   region  = "us-east-2"
 }
+
+locals {
+  json_data = jsondecode(file("./pylib/config.json"))
+}

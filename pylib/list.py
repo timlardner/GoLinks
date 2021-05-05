@@ -3,8 +3,11 @@ import json
 
 
 def lambda_handler(event, context):
+    with open('config.json', 'r') as f:
+        config = json.load(f)
+    table = config['TABLE']
     dynamodb = boto3.resource('dynamodb')
-    table = dynamodb.Table('tftest')
+    table = dynamodb.Table(table)
     
     x = sorted(table.scan()['Items'], key=lambda x: x['shortcode'])
     body = """

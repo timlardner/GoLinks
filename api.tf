@@ -1,10 +1,10 @@
-resource "aws_apigatewayv2_api" "tftest" {
-  name                       = "tftest"
+resource "aws_apigatewayv2_api" "go-api" {
+  name                       = "go-api"
   protocol_type              = "HTTP"
 }
 
-resource "aws_apigatewayv2_domain_name" "tftest-domain" {
-  domain_name = "golinks.intae.it"
+resource "aws_apigatewayv2_domain_name" "go-domain" {
+  domain_name = local.json_data.DOMAIN
 
   domain_name_configuration {
     certificate_arn = data.aws_acm_certificate.issued.arn
@@ -14,7 +14,7 @@ resource "aws_apigatewayv2_domain_name" "tftest-domain" {
 }
 
 resource "aws_apigatewayv2_deployment" "deployment" {
-  api_id      = aws_apigatewayv2_api.tftest.id
+  api_id      = aws_apigatewayv2_api.go-api.id
   description = "Deployment"
   lifecycle {
     create_before_destroy = true
@@ -29,23 +29,23 @@ resource "aws_apigatewayv2_deployment" "deployment" {
 }
 
 resource "aws_apigatewayv2_stage" "default" {
-  api_id = aws_apigatewayv2_api.tftest.id
+  api_id = aws_apigatewayv2_api.go-api.id
   name   = "$default"
   deployment_id = aws_apigatewayv2_deployment.deployment.id
 
 }
 
 resource "aws_apigatewayv2_api_mapping" "mapping" {
-  api_id      = aws_apigatewayv2_api.tftest.id
-  domain_name = aws_apigatewayv2_domain_name.tftest-domain.id
+  api_id      = aws_apigatewayv2_api.go-api.id
+  domain_name = aws_apigatewayv2_domain_name.go-domain.id
   stage       = aws_apigatewayv2_stage.default.id
 }
 
-resource "aws_apigatewayv2_integration" "tftest-read" {
-  api_id           = aws_apigatewayv2_api.tftest.id
+resource "aws_apigatewayv2_integration" "go-read" {
+  api_id           = aws_apigatewayv2_api.go-api.id
   integration_type = "AWS_PROXY"
   integration_method = "POST"
-  integration_uri = aws_lambda_function.tftest-read.invoke_arn
+  integration_uri = aws_lambda_function.golink-read-tf.invoke_arn
 
   response_parameters {
     status_code = 302
@@ -55,25 +55,25 @@ resource "aws_apigatewayv2_integration" "tftest-read" {
   }
 }
 
-resource "aws_apigatewayv2_integration" "tftest-list" {
-  api_id           = aws_apigatewayv2_api.tftest.id
+resource "aws_apigatewayv2_integration" "go-list" {
+  api_id           = aws_apigatewayv2_api.go-api.id
   integration_type = "AWS_PROXY"
   integration_method = "POST"
-  integration_uri = aws_lambda_function.tftest-list.invoke_arn
+  integration_uri = aws_lambda_function.golink-list-tf.invoke_arn
 }
 
-resource "aws_apigatewayv2_integration" "tftest-create" {
-  api_id           = aws_apigatewayv2_api.tftest.id
+resource "aws_apigatewayv2_integration" "go-create" {
+  api_id           = aws_apigatewayv2_api.go-api.id
   integration_type = "AWS_PROXY"
   integration_method = "POST"
-  integration_uri = aws_lambda_function.tftest-create.invoke_arn
+  integration_uri = aws_lambda_function.golink-create-tf.invoke_arn
 }
 
-resource "aws_apigatewayv2_integration" "tftest-write" {
-  api_id           = aws_apigatewayv2_api.tftest.id
+resource "aws_apigatewayv2_integration" "go-write" {
+  api_id           = aws_apigatewayv2_api.go-api.id
   integration_type = "AWS_PROXY"
   integration_method = "POST"
-  integration_uri = aws_lambda_function.tftest-write.invoke_arn
+  integration_uri = aws_lambda_function.golink-write-tf.invoke_arn
 
   request_parameters = {
     "overwrite:querystring.body" = "$request.body"
@@ -81,26 +81,26 @@ resource "aws_apigatewayv2_integration" "tftest-write" {
 }
 
 resource "aws_apigatewayv2_route" "read" {
-  api_id    = aws_apigatewayv2_api.tftest.id
+  api_id    = aws_apigatewayv2_api.go-api.id
   route_key = "$default"
-  target = "integrations/${aws_apigatewayv2_integration.tftest-read.id}"
+  target = "integrations/${aws_apigatewayv2_integration.go-read.id}"
 }
 
 resource "aws_apigatewayv2_route" "write" {
-  api_id    = aws_apigatewayv2_api.tftest.id
+  api_id    = aws_apigatewayv2_api.go-api.id
   route_key = "POST /create"
-  target = "integrations/${aws_apigatewayv2_integration.tftest-write.id}"
+  target = "integrations/${aws_apigatewayv2_integration.go-write.id}"
 }
 
 resource "aws_apigatewayv2_route" "create" {
-  api_id    = aws_apigatewayv2_api.tftest.id
+  api_id    = aws_apigatewayv2_api.go-api.id
   route_key = "GET /create"
-  target = "integrations/${aws_apigatewayv2_integration.tftest-create.id}"
+  target = "integrations/${aws_apigatewayv2_integration.go-create.id}"
 }
 
 resource "aws_apigatewayv2_route" "list" {
-  api_id    = aws_apigatewayv2_api.tftest.id
+  api_id    = aws_apigatewayv2_api.go-api.id
   route_key = "GET /list"
-  target = "integrations/${aws_apigatewayv2_integration.tftest-list.id}"
+  target = "integrations/${aws_apigatewayv2_integration.go-list.id}"
 }
 

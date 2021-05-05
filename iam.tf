@@ -3,33 +3,33 @@
 resource "aws_lambda_permission" "apigw_lambda_read" {
   statement_id  = "AllowExecutionFromAPIGateway"
   action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.tftest-read.function_name
+  function_name = aws_lambda_function.golink-read-tf.function_name
   principal     = "apigateway.amazonaws.com"
-  source_arn = "${aws_apigatewayv2_api.tftest.execution_arn}/*/*"
+  source_arn = "${aws_apigatewayv2_api.go-api.execution_arn}/*/*"
 }
 
 resource "aws_lambda_permission" "apigw_lambda_write" {
   statement_id  = "AllowExecutionFromAPIGateway"
   action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.tftest-write.function_name
+  function_name = aws_lambda_function.golink-write-tf.function_name
   principal     = "apigateway.amazonaws.com"
-  source_arn = "${aws_apigatewayv2_api.tftest.execution_arn}/*/*/*"
+  source_arn = "${aws_apigatewayv2_api.go-api.execution_arn}/*/*/*"
 }
 
 resource "aws_lambda_permission" "apigw_lambda_list" {
   statement_id  = "AllowExecutionFromAPIGateway"
   action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.tftest-list.function_name
+  function_name = aws_lambda_function.golink-list-tf.function_name
   principal     = "apigateway.amazonaws.com"
-  source_arn = "${aws_apigatewayv2_api.tftest.execution_arn}/*/*/*"
+  source_arn = "${aws_apigatewayv2_api.go-api.execution_arn}/*/*/*"
 }
 
 resource "aws_lambda_permission" "apigw_lambda_create" {
   statement_id  = "AllowExecutionFromAPIGateway"
   action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.tftest-create.function_name
+  function_name = aws_lambda_function.golink-create-tf.function_name
   principal     = "apigateway.amazonaws.com"
-  source_arn = "${aws_apigatewayv2_api.tftest.execution_arn}/*/*/*"
+  source_arn = "${aws_apigatewayv2_api.go-api.execution_arn}/*/*/*"
 }
 
 # Create roles for our lambda functions and attach a Dynamo DB policy to each of them
@@ -69,6 +69,7 @@ resource "aws_iam_role" "iam_for_write" {
   })
 }
 
+# A little permissive, but these can be reduced in scope
 data "aws_iam_policy" "DynamoRead" {
   arn = "arn:aws:iam::aws:policy/AmazonDynamoDBReadOnlyAccess"
 }
